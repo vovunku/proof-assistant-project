@@ -1,0 +1,27 @@
+define Pair = (Nat -> Nat -> Nat) -> Nat
+define pair = fun (a: Nat) -> fun (b: Nat) -> fun (f: (Nat -> Nat -> Nat)) -> f a b
+define fst = fun (p: ((Nat -> Nat -> Nat) -> Nat)) -> p (fun (a: Nat) -> fun (b: Nat) -> a)
+define snd = fun (p: ((Nat -> Nat -> Nat) -> Nat)) -> p (fun (a: Nat) -> fun (b: Nat) -> b)
+eval (fst (pair Z Z))
+define p = fun (n: Nat) -> Pair
+define z = pair Z Z
+define s = fun (n : Nat) -> fun (m : Pair) -> pair (snd m) n
+define pred = fun (k: Nat) -> fst (Ind p z s k)
+eval pred Z
+eval pred (S (S (S Z)))
+eval pred (S (S (S (S Z))))
+define pa = fun (n: Nat) -> Nat
+define sa = fun (n : Nat) -> fun (m : Nat) -> S m
+define add = fun (k: Nat) -> fun (l: Nat) -> Ind pa l sa k
+eval add (S (S (S Z))) (S (S Z))
+define ps = (fun (n: Nat) -> fun (m : Nat) -> fun (f : n = m) -> S n = S m)
+define rs = (fun (n : Nat) -> Refl (S n))
+define Seq = fun (x : Nat) -> fun (y : Nat) -> fun (e : x = y) -> J ps rs x y e
+check Seq = Pi (x : Nat) -> Pi (y : Nat) -> Pi (e : x = y) -> S x = S y
+define zadd = fun (n: Nat) -> Refl (add Z n)
+check zadd = Pi (n : Nat) -> add Z n = n
+define pz = fun (n : Nat) -> add n Z = n
+define zz = Refl Z
+define sz = fun (n : Nat) -> fun (e : (add n Z) = n) -> Seq (add n Z) n e
+define addz = fun (n: Nat) -> Ind pz zz sz n
+check addz = Pi (n : Nat) -> add n Z = n
